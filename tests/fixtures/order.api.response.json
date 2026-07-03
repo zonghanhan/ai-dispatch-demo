@@ -1,0 +1,45 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "id": 11409,
+    "tenantId": 1,
+    "orderNo": "ORD202507030001",
+    "projectNo": "PRJ001",
+    "projectName": "项目名称",
+    "bizType": 2,
+    "spuTypeCode": "INSTALL",
+    "spuTypeName": "安装",
+    "spuCategoryCode": "CURTAIN",
+    "spuCategoryName": "窗帘安装",
+    "spuPath": "窗帘>直轨>电动",
+    "status": 0,
+    "contacts": "张三",
+    "phone": "13800138000",
+    "address": "上海市浦东新区示例路100号",
+    "province": "上海市",
+    "city": "上海市",
+    "area": "浦东新区",
+    "provinceCode": "310000",
+    "cityCode": "310100",
+    "areaCode": "310115",
+    "lat": 31.2304,
+    "lon": 121.4737,
+    "attributeName": "大货",
+    "ideId": 0,
+    "ideName": "",
+    "emergencyFlag": 0,
+    "isNightEmergency": false,
+    "hotelName": "",
+    "customerName": "",
+    "workStartTime": "2026-07-05T09:00:00",
+    "workEndTime": "2026-07-05T18:00:00",
+    "goodsSaveReqVOList": [
+      {
+        "id": 15774,
+        "templateName": "电动窗帘",
+        "isNightEmergency": 0
+      }
+    ]
+  }
+}

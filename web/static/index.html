@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 智能派单 Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #16213e;
+    }
+
+    header p {
+      margin-top: 6px;
+      color: #5a6270;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #16213e;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    #order-id {
+      flex: 1;
+      min-width: 200px;
+      padding: 9px 12px;
+      border: 1px solid #c8cdd5;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    #order-id:focus {
+      border-color: #3b6ef5;
+      box-shadow: 0 0 0 2px rgba(59, 110, 245, 0.15);
+    }
+
+    #run-btn {
+      padding: 9px 22px;
+      background: #3b6ef5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    #run-btn:hover:not(:disabled) {
+      background: #2d57d4;
+    }
+
+    #run-btn:disabled {
+      background: #9aacd4;
+      cursor: not-allowed;
+    }
+
+    .meta-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .badge-dry-run {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+    }
+
+    .badge-live {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #28a745;
+    }
+
+    .badge-phase {
+      background: #e8f0fe;
+      color: #1a56db;
+      border: 1px solid #93b4f5;
+    }
+
+    .badge-status {
+      background: #f0f0f0;
+      color: #444;
+      border: 1px solid #ccc;
+    }
+
+    .badge-status.success {
+      background: #d4edda;
+      color: #155724;
+      border-color: #28a745;
+    }
+
+    .badge-status.escalated {
+      background: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+
+    .tech-details {
+      margin-top: 8px;
+    }
+
+    .tech-details summary {
+      font-size: 0.82rem;
+      color: #888;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tech-details .session-id {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: #999;
+      word-break: break-all;
+    }
+
+    .order-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px 20px;
+    }
+
+    .order-field label {
+      display: block;
+      font-size: 0.75rem;
+      color: #888;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .order-field span {
+      font-size: 0.92rem;
+      color: #16213e;
+      font-weight: 500;
+    }
+
+    .order-field.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .urgent-tag {
+      display: inline-block;
+      background: #fde8e8;
+      color: #c0392b;
+      font-size: 0.75rem;
+      padding: 1px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
+    .top3-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .master-card {
+      border: 1px solid #e0e4ea;
+      border-radius: 10px;
+      padding: 18px;
+      background: #fafbfc;
+      position: relative;
+    }
+
+    .master-card.rank-1 {
+      border-color: #3b6ef5;
+      background: #f0f4ff;
+      box-shadow: 0 2px 8px rgba(59, 110, 245, 0.12);
+    }
+
+    .master-rank {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #3b6ef5;
+      background: #dbeafe;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .master-card.rank-1 .master-rank {
+      background: #3b6ef5;
+      color: #fff;
+    }
+
+    .master-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #16213e;
+      margin-bottom: 10px;
+      padding-right: 48px;
+    }
+
+    .master-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .master-meta-row {
+      font-size: 0.86rem;
+      color: #555;
+    }
+
+    .master-meta-row strong {
+      color: #333;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .master-score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .master-score {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #3b6ef5;
+      line-height: 1.2;
+    }
+
+    .master-score-label {
+      font-size: 0.82rem;
+      color: #888;
+    }
+
+    .master-reason-box {
+      background: #fff;
+      border: 1px solid #e8eaed;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .master-reason-title {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .master-reason {
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .empty-hint {
+      color: #999;
+      font-size: 0.9rem;
+      padding: 8px 0;
+    }
+
+    .timeline {
+      list-style: none;
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: #d0d7e3;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 20px 0;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -24px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #3b6ef5;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #3b6ef5;
+    }
+
+    .timeline-step {
+      font-size: 0.78rem;
+      color: #888;
+      margin-bottom: 2px;
+    }
+
+    .timeline-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #16213e;
+    }
+
+    .timeline-duration {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #3b6ef5;
+      background: #e8f0fe;
+      padding: 1px 8px;
+      border-radius: 10px;
+    }
+
+    .timeline-detail {
+      font-size: 0.88rem;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .guard-log {
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      background: #fff8e1;
+      border-left: 3px solid #ffc107;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 6px;
+    }
+
+    #error-msg {
+      display: none;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+
+    #results {
+      display: none;
+    }
+
+    .loading {
+      display: none;
+      color: #3b6ef5;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>AI 智能派单 Demo</h1>
+      <p>输入订单号，系统将自动分析并推荐最合适的师傅（Top 3）。</p>
+    </header>
+
+    <div class="card">
+      <div class="form-row">
+        <label for="order-id">订单号</label>
+        <input
+          type="text"
+          id="order-id"
+          placeholder="DD20250102000023"
+          value="DD20250102000023"
+        />
+        <button id="run-btn" type="button">开始智能推荐</button>
+      </div>
+      <p class="loading" id="loading">正在分析订单并匹配师傅，请稍候…</p>
+    </div>
+
+    <div id="error-msg"></div>
+
+    <div id="results">
+      <div class="card">
+        <div class="meta-bar" id="meta-bar"></div>
+        <details class="tech-details">
+          <summary>技术详情</summary>
+          <p class="session-id" id="session-id"></p>
+        </details>
+      </div>
+
+      <div class="card" id="order-section" style="display:none">
+        <div class="card-title">订单概况</div>
+        <div class="order-summary" id="order-summary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">推荐师傅（Top 3）</div>
+        <div class="top3-grid" id="top3-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">派单过程</div>
+        <ul class="timeline" id="timeline"></ul>
+      </div>
+
+      <div class="card" id="guard-section" style="display:none">
+        <div class="card-title">安全校验记录</div>
+        <div id="guard-logs"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

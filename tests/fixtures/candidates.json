@@ -1,0 +1,56 @@
+{
+  "masters": [
+    {
+      "master_id": "ad71795f-ed1b-4d61-bfd7-5fa664337b18",
+      "master_name": "师傅6746",
+      "nbs_id": "A6746",
+      "company": 2,
+      "company_name": "其他公司",
+      "master_type": 1,
+      "profession_type": "安装",
+      "skill_codes": ["PL010289", "PL010288"],
+      "skill_match": true,
+      "service_city": "深圳市",
+      "is_key_service_area": true,
+      "lat": 22.661156,
+      "lng": 113.922561,
+      "free_ratio": 0.5,
+      "active_orders": 95
+    },
+    {
+      "master_id": "3c8e4dc9169e4c31a71c8a73eb4047c5",
+      "master_name": "甘伟丽",
+      "nbs_id": "A1042",
+      "company": 1,
+      "company_name": "汇信昌",
+      "master_type": 1,
+      "profession_type": "安装",
+      "skill_codes": ["PL010104"],
+      "skill_match": true,
+      "service_city": "深圳市",
+      "is_key_service_area": true,
+      "lat": 22.661208,
+      "lng": 113.922448,
+      "free_ratio": 0.8,
+      "active_orders": 2
+    },
+    {
+      "master_id": "aeb790a58e46432e8f8497cd0e7d9246",
+      "master_name": "宗含含",
+      "nbs_id": "A0454",
+      "company": 1,
+      "company_name": "汇信昌",
+      "master_type": 2,
+      "profession_type": "安装",
+      "skill_codes": ["PL010104"],
+      "skill_match": true,
+      "service_city": "深圳市",
+      "is_key_service_area": true,
+      "lat": 22.661226,
+      "lng": 113.922383,
+      "free_ratio": 1.0,
+      "active_orders": 0
+    }
+  ],
+  "count": 3
+}
