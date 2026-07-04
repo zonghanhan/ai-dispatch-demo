@@ -42,4 +42,4 @@ pytest tests/integration -m integration -v
 
 ## 环境清单
 
-见 [CONTEXT.md](CONTEXT.md)。
+见 [CONTEXT.md](CONTEXT.md).
