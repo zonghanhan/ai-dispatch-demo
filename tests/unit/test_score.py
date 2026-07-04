@@ -27,3 +27,25 @@ def test_rank_excludes_low_free_ratio():
     ranked = rank_masters(order, masters)
     assert len(ranked) == 1
     assert ranked[0].master_id == "m2"
+
+
+def test_rank_excludes_over_10km():
+    order = _order("非汇信昌")
+    masters = [
+        MasterCandidate(master_id="far", free_ratio=1.0, lat=31.33, lng=121.47, skill_match=True),
+        MasterCandidate(master_id="near", free_ratio=0.8, lat=31.24, lng=121.47, skill_match=True),
+    ]
+    ranked = rank_masters(order, masters)
+    assert len(ranked) == 1
+    assert ranked[0].master_id == "near"
+
+
+def test_rank_excludes_5_to_10km():
+    order = _order("非汇信昌")
+    masters = [
+        MasterCandidate(master_id="mid", free_ratio=1.0, lat=31.28, lng=121.47, skill_match=True),
+        MasterCandidate(master_id="near", free_ratio=0.8, lat=31.24, lng=121.47, skill_match=True),
+    ]
+    ranked = rank_masters(order, masters)
+    assert len(ranked) == 1
+    assert ranked[0].master_id == "near"

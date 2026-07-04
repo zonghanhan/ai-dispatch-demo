@@ -73,10 +73,15 @@ def humanize_steps(steps: list[dict]) -> list[dict]:
     return humanized
 
 
-def build_order_summary(order: dict | None) -> dict | None:
+def build_order_summary(
+    order: dict | None,
+    *,
+    conclusion: dict | None = None,
+    total_duration_label: str | None = None,
+) -> dict | None:
     if not order:
         return None
-    return {
+    summary = {
         "order_no": order.get("order_no") or order.get("order_id") or "",
         "biz_type_name": order.get("biz_type_name") or "",
         "category": order.get("category") or "",
@@ -85,6 +90,11 @@ def build_order_summary(order: dict | None) -> dict | None:
         "urgent": bool(order.get("urgent")),
         "address_masked": order.get("address_masked") or "",
     }
+    if conclusion:
+        summary["dispatch_result_label"] = conclusion.get("headline", "").replace("结论：", "")
+    if total_duration_label:
+        summary["total_duration_label"] = total_duration_label
+    return summary
 
 
 def enrich_top3(

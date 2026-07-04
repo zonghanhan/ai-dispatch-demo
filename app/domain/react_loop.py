@@ -49,6 +49,8 @@ def _loop_result(
         "steps": steps,
         "session_id": session_id,
         "order": session_state.get("order"),
+        "candidates": session_state.get("candidates"),
+        "rankings": session_state.get("rankings"),
     }
 
 

@@ -25,9 +25,14 @@ def rank_masters(order: Order, masters: list[MasterCandidate]) -> list[RankingIt
             km = 999.0
         else:
             km = haversine_km(order.lat, order.lng, m.lat, m.lng)
+        if order.customer_type == "非汇信昌":
+            if km > 10:
+                continue
+            if km > 5:
+                continue
+        elif km > 100.5:
+            continue
         d_score = distance_score(km, order.customer_type)
-        if order.customer_type == "非汇信昌" and km > 10:
-            d_score = 0.0
         total = d_score + m.free_ratio
         if km >= 900:
             distance_text = "距离信息暂不可用"

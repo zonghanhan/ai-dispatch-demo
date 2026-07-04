@@ -51,6 +51,13 @@ def test_dispatch_returns_success_with_steps(client):
     assert body["top3"][0]["master_name"]
     assert body["top3"][0]["nbs_id"]
     assert body["top3"][0]["reason"]
+    assert body["conclusion"]
+    assert body["conclusion"]["headline"]
+    assert body["replay_steps"]
+    assert len(body["replay_steps"]) == 5
+    assert body["candidate_matrix"] is not None
+    assert body["scenario"]
+    assert body["total_duration_label"]
 
 
 def test_get_session_after_dispatch(client):
@@ -64,6 +71,9 @@ def test_get_session_after_dispatch(client):
     assert body["order_id"] == "11409"
     assert body["status"] == "SUCCESS"
     assert len(body["steps"]) >= 3
+    assert body["conclusion"]
+    assert body["replay_steps"]
+    assert body["order_summary"]
 
 
 def test_get_session_not_found(client):

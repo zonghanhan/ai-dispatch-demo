@@ -412,6 +412,155 @@
       font-size: 0.9rem;
       margin-top: 10px;
     }
+
+    .scenario-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-head h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #16213e;
+    }
+
+    .badge-scenario {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .badge-scenario.ok { background: #f6ffed; color: #389e0d; }
+    .badge-scenario.warn { background: #fff7e6; color: #d46b08; }
+    .badge-scenario.fail { background: #fff2f0; color: #cf1322; }
+
+    .conclusion {
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .conclusion h1 {
+      font-size: 1.125rem;
+      margin-bottom: 6px;
+    }
+
+    .conclusion p {
+      color: rgba(0, 0, 0, 0.75);
+      line-height: 1.65;
+      font-size: 0.9rem;
+    }
+
+    .conclusion.ok { background: #f6ffed; border: 1px solid #b7eb8f; }
+    .conclusion.ok h1 { color: #389e0d; }
+    .conclusion.warn { background: #fff7e6; border: 1px solid #ffd591; }
+    .conclusion.warn h1 { color: #d46b08; }
+    .conclusion.fail { background: #fff2f0; border: 1px solid #ffccc7; }
+    .conclusion.fail h1 { color: #cf1322; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 24px;
+      font-size: 0.875rem;
+    }
+
+    .info-grid dt {
+      color: rgba(0, 0, 0, 0.45);
+      margin-bottom: 4px;
+      font-size: 0.75rem;
+    }
+
+    .info-grid dd {
+      font-weight: 500;
+      margin: 0;
+      color: #16213e;
+    }
+
+    .replay-timeline {
+      padding-left: 4px;
+    }
+
+    .replay-step {
+      display: flex;
+      gap: 14px;
+      padding-bottom: 20px;
+      position: relative;
+    }
+
+    .replay-step:not(:last-child)::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 28px;
+      bottom: 0;
+      width: 2px;
+      background: #e8e8e8;
+    }
+
+    .replay-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #1677ff;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .replay-step-body h3 {
+      font-size: 0.9375rem;
+      margin-bottom: 6px;
+      color: #16213e;
+    }
+
+    .replay-step-body p {
+      font-size: 0.8125rem;
+      color: rgba(0, 0, 0, 0.65);
+      line-height: 1.65;
+    }
+
+    .compare {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      margin-top: 8px;
+    }
+
+    .compare th,
+    .compare td {
+      border: 1px solid #f0f0f0;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .compare th {
+      background: #fafafa;
+      font-weight: 600;
+    }
+
+    .compare tr.selected { background: #f6ffed; font-weight: 600; }
+    .compare tr.skip,
+    .compare tr.exclude { background: #fff2f0; color: #cf1322; }
+
+    .callout {
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      font-size: 0.8125rem;
+      line-height: 1.65;
+    }
+
+    .callout-info { background: #e6f4ff; border-left: 3px solid #1677ff; }
+    .callout-warn { background: #fff7e6; border-left: 3px solid #fa8c16; }
   </style>
 </head>
 <body>
@@ -446,19 +595,31 @@
         </details>
       </div>
 
+      <div id="scenario-head" class="scenario-head" style="display:none"></div>
+      <div id="conclusion" style="display:none"></div>
+
       <div class="card" id="order-section" style="display:none">
-        <div class="card-title">订单概况</div>
-        <div class="order-summary" id="order-summary"></div>
+        <div class="card-title">订单信息</div>
+        <div class="card-body">
+          <dl class="info-grid" id="order-summary"></dl>
+        </div>
+      </div>
+
+      <div class="card" id="replay-section" style="display:none">
+        <div class="card-title">指派步骤</div>
+        <div class="replay-timeline" id="replay-steps"></div>
       </div>
 
       <div class="card">
-        <div class="card-title">推荐师傅（Top 3）</div>
+        <div class="card-title">推荐师傅详情（Top 3）</div>
         <div class="top3-grid" id="top3-grid"></div>
       </div>
 
       <div class="card">
-        <div class="card-title">派单过程</div>
-        <ul class="timeline" id="timeline"></ul>
+        <details>
+          <summary class="card-title" style="cursor:pointer;border:none;padding-bottom:0">技术步骤（工具调用）</summary>
+          <ul class="timeline" id="timeline" style="margin-top:14px"></ul>
+        </details>
       </div>
 
       <div class="card" id="guard-section" style="display:none">

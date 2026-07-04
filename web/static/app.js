@@ -8,8 +8,12 @@
   var results = document.getElementById("results");
   var metaBar = document.getElementById("meta-bar");
   var sessionIdEl = document.getElementById("session-id");
+  var scenarioHead = document.getElementById("scenario-head");
+  var conclusionEl = document.getElementById("conclusion");
   var orderSection = document.getElementById("order-section");
   var orderSummary = document.getElementById("order-summary");
+  var replaySection = document.getElementById("replay-section");
+  var replaySteps = document.getElementById("replay-steps");
   var top3Grid = document.getElementById("top3-grid");
   var timeline = document.getElementById("timeline");
   var guardSection = document.getElementById("guard-section");
@@ -73,16 +77,54 @@
     sessionIdEl.textContent = "会话编号：" + (data.session_id || "—");
   }
 
-  function addOrderField(container, label, value, fullWidth) {
+  function renderScenario(scenario) {
+    scenarioHead.innerHTML = "";
+    if (!scenario || !scenario.label) {
+      scenarioHead.style.display = "none";
+      return;
+    }
+
+    scenarioHead.style.display = "flex";
+    var badge = document.createElement("span");
+    badge.className = "badge-scenario " + (scenario.badge || "ok");
+    badge.textContent = scenario.label;
+    scenarioHead.appendChild(badge);
+
+    var title = document.createElement("h2");
+    title.textContent = "指派路径回放";
+    scenarioHead.appendChild(title);
+  }
+
+  function renderConclusion(conclusion) {
+    conclusionEl.innerHTML = "";
+    if (!conclusion || !conclusion.headline) {
+      conclusionEl.style.display = "none";
+      return;
+    }
+
+    conclusionEl.style.display = "block";
+    conclusionEl.className = "conclusion " + (conclusion.tone || "ok");
+
+    var h1 = document.createElement("h1");
+    h1.textContent = conclusion.headline;
+    conclusionEl.appendChild(h1);
+
+    if (conclusion.detail) {
+      var p = document.createElement("p");
+      p.textContent = conclusion.detail;
+      conclusionEl.appendChild(p);
+    }
+  }
+
+  function addInfoField(container, label, value) {
     if (!value) return;
     var div = document.createElement("div");
-    div.className = "order-field" + (fullWidth ? " full-width" : "");
-    var lbl = document.createElement("label");
-    lbl.textContent = label;
-    var span = document.createElement("span");
-    span.textContent = value;
-    div.appendChild(lbl);
-    div.appendChild(span);
+    var dt = document.createElement("dt");
+    dt.textContent = label;
+    var dd = document.createElement("dd");
+    dd.textContent = value;
+    div.appendChild(dt);
+    div.appendChild(dd);
     container.appendChild(div);
   }
 
@@ -94,28 +136,96 @@
     }
 
     orderSection.style.display = "block";
-    addOrderField(orderSummary, "订单号", summary.order_no);
-    addOrderField(orderSummary, "业务类型", summary.biz_type_name);
-    addOrderField(orderSummary, "商品类别", summary.category);
-    addOrderField(orderSummary, "服务城市", summary.city);
-    addOrderField(orderSummary, "客户类型", summary.customer_type);
-    addOrderField(orderSummary, "服务地址", summary.address_masked, true);
-
+    addInfoField(orderSummary, "订单号", summary.order_no);
+    addInfoField(orderSummary, "业务类型", summary.biz_type_name);
+    addInfoField(orderSummary, "商品类别", summary.category);
+    addInfoField(orderSummary, "服务城市", summary.city);
+    addInfoField(orderSummary, "客户类型", summary.customer_type);
     if (summary.urgent) {
-      var urgentField = document.createElement("div");
-      urgentField.className = "order-field";
-      var lbl = document.createElement("label");
-      lbl.textContent = "紧急程度";
-      var span = document.createElement("span");
-      span.textContent = "紧急订单";
-      var tag = document.createElement("span");
-      tag.className = "urgent-tag";
-      tag.textContent = "加急";
-      span.appendChild(tag);
-      urgentField.appendChild(lbl);
-      urgentField.appendChild(span);
-      orderSummary.appendChild(urgentField);
+      addInfoField(orderSummary, "订单类型", "紧急订单");
     }
+    addInfoField(orderSummary, "服务地址", summary.address_masked);
+    addInfoField(orderSummary, "派单结果", summary.dispatch_result_label);
+    addInfoField(orderSummary, "总耗时", summary.total_duration_label);
+  }
+
+  function renderCompareTable(table) {
+    if (!table || table.length === 0) return null;
+
+    var tbl = document.createElement("table");
+    tbl.className = "compare";
+    var thead = document.createElement("thead");
+    thead.innerHTML =
+      "<tr><th>师傅</th><th>离订单</th><th>说明</th><th>结果</th></tr>";
+    tbl.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    table.forEach(function (row) {
+      var tr = document.createElement("tr");
+      if (row.status === "selected") tr.className = "selected";
+      else if (row.status === "skip") tr.className = "skip";
+      else if (row.status === "exclude") tr.className = "exclude";
+
+      tr.innerHTML =
+        "<td>" +
+        (row.master_name || "—") +
+        "</td><td>" +
+        (row.distance_label || "—") +
+        "</td><td>" +
+        (row.reason_text || "—") +
+        "</td><td>" +
+        (row.status_label || "—") +
+        "</td>";
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    return tbl;
+  }
+
+  function renderReplaySteps(steps) {
+    replaySteps.innerHTML = "";
+    if (!steps || steps.length === 0) {
+      replaySection.style.display = "none";
+      return;
+    }
+
+    replaySection.style.display = "block";
+    steps.forEach(function (step) {
+      var wrap = document.createElement("div");
+      wrap.className = "replay-step";
+
+      var num = document.createElement("div");
+      num.className = "replay-step-num";
+      num.textContent = String(step.step);
+      wrap.appendChild(num);
+
+      var body = document.createElement("div");
+      body.className = "replay-step-body";
+
+      var h3 = document.createElement("h3");
+      h3.textContent = step.title || "";
+      body.appendChild(h3);
+
+      if (step.body) {
+        var p = document.createElement("p");
+        p.innerHTML = step.body;
+        body.appendChild(p);
+      }
+
+      if (step.callout && step.callout.text) {
+        var callout = document.createElement("div");
+        callout.className =
+          "callout callout-" + (step.callout.type === "warn" ? "warn" : "info");
+        callout.textContent = step.callout.text;
+        body.appendChild(callout);
+      }
+
+      var table = renderCompareTable(step.compare_table);
+      if (table) body.appendChild(table);
+
+      wrap.appendChild(body);
+      replaySteps.appendChild(wrap);
+    });
   }
 
   function renderTop3(top3) {
@@ -235,7 +345,7 @@
     if (!steps || steps.length === 0) {
       var hint = document.createElement("p");
       hint.className = "empty-hint";
-      hint.textContent = "暂无派单过程记录";
+      hint.textContent = "暂无工具调用记录";
       timeline.appendChild(hint);
       return;
     }
@@ -297,7 +407,10 @@
     hideError();
     results.style.display = "block";
     renderMeta(data);
+    renderScenario(data.scenario);
+    renderConclusion(data.conclusion);
     renderOrderSummary(data.order_summary);
+    renderReplaySteps(data.replay_steps);
     renderTop3(data.top3);
     renderTimeline(data.steps);
     renderGuardLogs(data.guard_logs);

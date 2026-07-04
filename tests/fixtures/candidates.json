@@ -12,8 +12,8 @@
       "skill_match": true,
       "service_city": "深圳市",
       "is_key_service_area": true,
-      "lat": 22.661156,
-      "lng": 113.922561,
+      "lat": 31.231,
+      "lng": 121.474,
       "free_ratio": 0.5,
       "active_orders": 95
     },
@@ -29,8 +29,8 @@
       "skill_match": true,
       "service_city": "深圳市",
       "is_key_service_area": true,
-      "lat": 22.661208,
-      "lng": 113.922448,
+      "lat": 31.235,
+      "lng": 121.478,
       "free_ratio": 0.8,
       "active_orders": 2
     },
@@ -46,8 +46,8 @@
       "skill_match": true,
       "service_city": "深圳市",
       "is_key_service_area": true,
-      "lat": 22.661226,
-      "lng": 113.922383,
+      "lat": 31.238,
+      "lng": 121.481,
       "free_ratio": 1.0,
       "active_orders": 0
     }
